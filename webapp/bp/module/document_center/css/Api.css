@@ -1,0 +1,125 @@
+html, body {
+  width: 100%;
+  height: 100%;
+}
+
+.container {
+  width: 100%;
+  height: 100%;
+  padding: 1.5rem;
+  background-color: #f5f5f5;
+  overflow: auto;
+}
+
+.module_method_table thead tr .type {
+  width: auto;
+}
+
+.module_method_table thead tr .name {
+  width: auto;
+}
+
+.module_method_table thead tr .description {
+  width: auto;
+}
+
+.module_method_table thead tr .new_window_open {
+  width: auto;
+  cursor: pointer;
+  text-align: right;
+}
+
+.module_method_table thead tr .new_window_open a {
+  color: #82baf6;
+  font-size: inherit;
+}
+
+.module_method_table tbody .module {
+  background-color: #ddeff7;
+}
+
+.module_method_table tbody .interface {
+}
+
+.module_method_table tbody tr .interface_name {
+  cursor: pointer;
+  padding-left: 3rem;
+}
+
+.module_method_table tbody tr .interface_name a {
+  color: #82baf6;
+  font-size: inherit;
+}
+
+.module_method_table tbody tr .interface_name a:hover {
+  color: #ff884f;
+}
+
+.module_method_table tbody tr .rowspan {
+  text-align: center;
+  user-select: none;
+}
+
+.base_information {
+  margin-top: 1.5rem;
+}
+
+.base_information tbody tr .method_name {
+  color: red;
+  font-weight: bolder;
+}
+
+.request_parameter, .return_data  {
+  border-top-width: 0rem;
+}
+
+.method_table thead {
+  background-color: #ddeff7;
+}
+
+.method_table tbody tr .rowspan {
+  text-align: center;
+  user-select: none;
+}
+
+.method_table tbody tr .field {
+  background-color: #fffeef;
+}
+
+.method_table tbody tr .value {
+  background-color: #ffffff;
+}
+
+.method_table tbody tr .anonymous_access {
+  color: #5cb85c;
+  font-weight: bolder;
+}
+
+.method_table tbody tr .method_type {
+  color: #82baf6;
+  font-weight: bolder;
+}
+
+/*
+ * word-break: break-all; 只对英文起作用，以字母作为换行依据。
+ * word-wrap: break-word; 只对英文起作用，以单词作为换行依据。
+ * white-space: pre-wrap; 只对中文起作用，强制换行。
+ */
+.method_table tbody tr .format, .method_table tbody tr .format_prompt, .method_table tbody tr .remark {
+  word-break: break-all;
+  white-space: pre-wrap;
+}
+
+.return_top_button {
+  width: 5rem;
+  height: 5rem;
+  right: 3rem;
+  bottom: 3rem;
+  position: fixed;
+  cursor: pointer;
+  border-radius: 2.5rem;
+  background-color: #dae7ed;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg width='16' height='16' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M7.50815128.70791839c.26930382-.27722452.71439362-.27722452.98369744 0l5.99999998 6.17647059-.9836974.95559179L8.68515128 2.875l.00056301 12.6489496H7.31428571L7.31415128 2.874 2.49184872 7.83998077l-.98369744-.95559179z' fill='%23000' fill-rule='nonzero' opacity='.5'/%3e%3c/svg%3e");
+}

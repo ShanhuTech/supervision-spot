@@ -1,0 +1,183 @@
+"use strict";
+
+class PopupWindow extends ObjectFactory {
+  /**
+   * 构造函数
+   * @param source 调用源
+   * @param title 标题
+   * @param width 宽度（单位：rem）
+   * @param hideCallback 隐藏回调方法
+   */
+  constructor(source, title, width, hideCallback) {
+    ////////////////////////////////////////////////////////////////////////////
+    // 父类构造函数。
+    ////////////////////////////////////////////////////////////////////////////
+    super();
+    ////////////////////////////////////////////////////////////////////////////
+    // 对象源。
+    ////////////////////////////////////////////////////////////////////////////
+    this.source = source;
+    ////////////////////////////////////////////////////////////////////////////
+    // 弹窗标题。
+    ////////////////////////////////////////////////////////////////////////////
+    this.windowTitle = title;
+    ////////////////////////////////////////////////////////////////////////////
+    // 弹窗窗口区域的宽度。
+    ////////////////////////////////////////////////////////////////////////////
+    this.windowWidth = width;
+    ////////////////////////////////////////////////////////////////////////////
+    // 隐藏回调方法。
+    ////////////////////////////////////////////////////////////////////////////
+    this.hideCallback = hideCallback;
+    ////////////////////////////////////////////////////////////////////////////
+    // 弹窗淡入的时间。
+    ////////////////////////////////////////////////////////////////////////////
+    this.windowFadeInTime = 300;
+    ////////////////////////////////////////////////////////////////////////////
+    // 弹窗淡出的时间。
+    ////////////////////////////////////////////////////////////////////////////
+    this.windowFadeOutTime = 300;
+  }
+
+  /**
+   * 生成代码
+   */
+  generateCode() {
+    ////////////////////////////////////////////////////////////////////////////
+    // 属性代码。
+    ////////////////////////////////////////////////////////////////////////////
+    let attributeCode = "";
+    Toolkit.eachJSONObjectKV(this.objectAttribute, function(key, value) {
+      attributeCode += `${key} = "${value}"`;
+    });
+    this.objectCode = `
+      <div id = "${this.objectId}" ${attributeCode}>
+        <div class = "gpw_window">
+          <div class = "gpw_title">
+            <div class = "gpw_text">${this.windowTitle}</div><img />
+          </div>
+          <div class = "global_scroll global_scroll_light gpw_content">${this.objectContent}</div>
+        </div>
+      </div>
+    `;
+  }
+
+  /**
+   * 初始化事件
+   * 除关闭图标以外，如果捕捉click事件容易造成鼠标的误操作，所以这里改用mousedow
+   * n。
+   */
+  initEvent() {
+    ////////////////////////////////////////////////////////////////////////////
+    // 注册窗口区域的mousedown事件。
+    ////////////////////////////////////////////////////////////////////////////
+    this.getObject().off("mousedown").on("mousedown", null, this, this.windowAreaMousedownEvent);
+    ////////////////////////////////////////////////////////////////////////////
+    // 注册标题区域的mousedown事件。
+    ////////////////////////////////////////////////////////////////////////////
+    this.getObject().find(".gpw_window").find(".gpw_title").off("mousedown").on("mousedown", null, this, this.titleAreaMousedownEvent);
+    ////////////////////////////////////////////////////////////////////////////
+    // 注册关闭图标的click事件。
+    ////////////////////////////////////////////////////////////////////////////
+    this.getObject().find(".gpw_window").find(".gpw_title").find("img").off("click").on("click", null, this, this.closeImageClickEvent);
+    ////////////////////////////////////////////////////////////////////////////
+    // 注册内容区域的mousedown事件。
+    ////////////////////////////////////////////////////////////////////////////
+    this.getObject().find(".gpw_window").find(".gpw_content").off("mousedown").on("mousedown", null, this, this.contentAreaMousedownEvent);
+  }
+
+  /**
+   * 移除事件
+   */
+  removeEvent() {
+    this.getObject().off("mousedown");
+    this.getObject().find(".gpw_window").find(".gpw_title").off("mousedown");
+    this.getObject().find(".gpw_window").find(".gpw_title").find("img").off("click");
+    this.getObject().find(".gpw_window").find(".gpw_content").off("mousedown");
+  }
+  /**
+   * 恢复事件
+   */
+  recoverEvent() {
+    this.getObject().off("mousedown").on("mousedown", null, this, this.windowAreaMousedownEvent);
+    this.getObject().find(".gpw_window").find(".gpw_title").off("mousedown").on("mousedown", null, this, this.titleAreaMousedownEvent);
+    this.getObject().find(".gpw_window").find(".gpw_title").find("img").off("click").on("click", null, this, this.closeImageClickEvent);
+    this.getObject().find(".gpw_window").find(".gpw_content").off("mousedown").on("mousedown", null, this, this.contentAreaMousedownEvent);
+  }
+
+  /**
+   * 窗口区域的mousedown事件
+   * @param event 事件对象
+   */
+  windowAreaMousedownEvent(event) {
+    const source = event.data;
+    ////////////////////////////////////////////////////////////////////////////
+    // 调用隐藏弹窗方法。
+    ////////////////////////////////////////////////////////////////////////////
+    source.hide();
+  }
+
+  /**
+   * 标题区域的mousedown事件
+   * @param event 事件对象
+   */
+  titleAreaMousedownEvent(event) {
+    ////////////////////////////////////////////////////////////////////////////
+    // 阻止事件冒泡至父元素。
+    ////////////////////////////////////////////////////////////////////////////
+    event.stopPropagation();
+  }
+
+  /**
+   * 关闭图标的click事件
+   * @param event 事件对象
+   */
+  closeImageClickEvent(event) {
+    const source = event.data;
+    ////////////////////////////////////////////////////////////////////////////
+    // 点击关闭图标时调用隐藏弹窗方法。
+    ////////////////////////////////////////////////////////////////////////////
+    source.hide();
+  }
+
+  /**
+   * 内容区域的mousedown事件
+   * @param event 事件对象
+   */
+  contentAreaMousedownEvent(event) {
+    ////////////////////////////////////////////////////////////////////////////
+    // 阻止事件冒泡至父元素。
+    ////////////////////////////////////////////////////////////////////////////
+    event.stopPropagation();
+  }
+
+  /**
+   * 显示弹窗
+   */
+  show() {
+    ////////////////////////////////////////////////////////////////////////////
+    // 必须先显示后面才能取到具体数值。
+    ////////////////////////////////////////////////////////////////////////////
+    this.getObject().fadeIn(this.windowFadeInTime);
+    ////////////////////////////////////////////////////////////////////////////
+    // 设置窗口的宽度。
+    ////////////////////////////////////////////////////////////////////////////
+    this.getObject().find(".gpw_window").css("width", this.windowWidth + "rem");
+    ////////////////////////////////////////////////////////////////////////////
+    // 设置内容的高度，基于定位计算的单位可以是px。
+    ////////////////////////////////////////////////////////////////////////////
+    const windowHeight = Toolkit.getDomElementRect(this.getObject().find(".gpw_window").get(0)).height;
+    const titleHeight = Toolkit.getDomElementRect(this.getObject().find(".gpw_window").find(".gpw_title").get(0)).height;
+    this.getObject().find(".gpw_content").css("height", (windowHeight - titleHeight) + "px");
+  }
+
+  /**
+   * 隐藏弹窗
+   */
+  hide() {
+    const thisObj = this;
+    this.getObject().fadeOut(this.windowFadeOutTime, function() {
+      thisObj.hideCallback && thisObj.hideCallback(thisObj.source);
+    });
+  }
+}
